@@ -1,0 +1,8 @@
+services:
+  bot:
+    container_name: bot
+    build: ./dnevnik_bot_SPBv2
+    restart: always
+
+    env_file:
+      - ./dnevnik_bot_SPBv2/.env
