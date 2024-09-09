@@ -2,6 +2,7 @@ from aiogram import Dispatcher, F, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+
 from create_bot import bot
 from keyboards import (
 	cancel_b,
@@ -150,9 +151,7 @@ async def cancel_handler(message: types.Message, state: FSMContext) -> None:
 	user_id = message.from_user.id
 
 	current_state = await state.get_state()
-	if current_state is None:
-		pass
-	else:
+	if current_state is not None:
 		await state.clear()
 	await message.answer(
 		CANCELED,

@@ -5,5 +5,5 @@ from config import TOKEN
 
 storage = MemoryStorage()
 
-bot = Bot(token=TOKEN, parse_mode='HTML')
+bot = Bot(token=TOKEN, parse_mode="HTML")
 dp = Dispatcher(storage=storage)
