@@ -51,7 +51,7 @@ async def save_user_info(id_tg: int, user_info: dict):
 
 def _abbreviation(marks_res: str):
 	return (
-		marks_res.replace("Основы безопасности жизнедеятельности", "ОБЖ")
+		marks_res.replace("Основы безопасности и защиты Родины", "ОБЗР")
 		.replace("Изобразительное искусство", "ИЗО")
 		.replace("Физическая культура", "Физ-ра")
 		.replace("Иностранный язык (английский)", "Английский язык")
@@ -63,8 +63,8 @@ def _abbreviation(marks_res: str):
 
 
 def _sort_quater(subject_data, subject) -> str:
-	average = subject_data["average"][0]
-	count = subject_data["count_marks"][0]
+	average = subject_data.get("average", [None])[0]
+	count = subject_data.get("count_marks", [None])[0]
 	target_grade = subject_data["target_grade"] or ""
 	final_m = ""
 	if subject_data["final_q"]:
