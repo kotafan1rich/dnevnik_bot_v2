@@ -1,9 +1,9 @@
 from aiogram import Bot, Dispatcher
-from aiogram.fsm.storage.redis import RedisStorage
+from aiogram.fsm.storage.memory import MemoryStorage
 
-from config import REDIS_URL, TOKEN
+from config import TOKEN
 
-storage = RedisStorage.from_url(REDIS_URL)
+storage = MemoryStorage()
 
 bot = Bot(token=TOKEN, parse_mode="HTML")
 dp = Dispatcher(storage=storage)
