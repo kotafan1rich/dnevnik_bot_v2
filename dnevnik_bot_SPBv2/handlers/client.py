@@ -2,6 +2,7 @@ from aiogram import Dispatcher, F, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+import aiohttp
 
 from create_bot import bot
 from keyboards import (
@@ -28,12 +29,7 @@ from messages import (
 )
 
 from .other import (
-	add_user,
-	get_clean_user_info,
-	get_marks,
-	get_user_info,
-	save_user_info,
-	user_exists,
+	MarksService,
 )
 
 admins = (1324716819,)
@@ -57,9 +53,23 @@ class FSMSettings(StatesGroup):
 	jwt_token = State()
 
 
+SESSION = None
+
+
+async def get_global_session():
+	global SESSION
+	if SESSION is None:
+		SESSION = aiohttp.ClientSession()
+	return SESSION
+
+
 async def start(message: types.Message):
 	id_tg = message.from_user.id
-	if not await user_exists(id_tg) and await add_user(id_tg):
+	session = await get_global_session()
+	marks_servise = MarksService(session=session)
+	if not await marks_servise.user_exists(id_tg) and await marks_servise.add_user(
+		id_tg
+	):
 		await bot.send_message(
 			id_tg,
 			f"Здравствуйте\n\n{HELP}",
@@ -67,13 +77,18 @@ async def start(message: types.Message):
 		)
 	else:
 		await bot.send_message(
-			id_tg, HELP, reply_markup=await get_kb_client_main(id_tg), parse_mode=None
+			id_tg,
+			HELP,
+			reply_markup=await get_kb_client_main(id_tg),
+			parse_mode=None,
 		)
 
 
 async def get_settings(message: types.Message, state: FSMContext):
-	user_info = await get_user_info(message.from_user.id)
-	clean_user_info: str = get_clean_user_info(user_info)
+	session = await get_global_session()
+	marks_servise = MarksService(session=session)
+	user_info = await marks_servise.get_user_info(message.from_user.id)
+	clean_user_info: str = marks_servise.get_clean_user_info(user_info)
 
 	await state.set_state(FSMSettings.user_info)
 	await bot.send_message(
@@ -96,7 +111,11 @@ async def set_settings(message: types.Message, state: FSMContext):
 
 	if param == save_b.text:
 		params = await state.get_data()
-		res = await save_user_info(id_tg=message.from_user.id, user_info=params)
+		session = await get_global_session()
+		marks_servise = MarksService(session=session)
+		res = await marks_servise.save_user_info(
+			id_tg=message.from_user.id, user_info=params
+		)
 		text = ADDED if res else ERROR_MES
 		await bot.send_message(
 			message.from_user.id, text, reply_markup=await get_kb_client_main(id_tg)
@@ -162,7 +181,9 @@ async def cancel_handler(message: types.Message, state: FSMContext) -> None:
 async def get_marks_handler(message: types.Message):
 	id_tg = message.from_user.id
 	period = message.text
-	marks = await get_marks(id_tg=id_tg, period=period)
+	session = await get_global_session()
+	marks_servise = MarksService(session=session)
+	marks = await marks_servise.get_marks(id_tg=id_tg, period=period)
 	await bot.send_message(
 		message.from_user.id, marks, reply_markup=await get_kb_client_main(id_tg)
 	)
