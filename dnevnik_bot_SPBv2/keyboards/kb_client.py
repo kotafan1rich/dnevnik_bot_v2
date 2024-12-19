@@ -13,18 +13,17 @@ save_b = KeyboardButton(text="Сохранить")
 change_jwt_b = KeyboardButton(text="jwt")
 
 
-async def get_kb_clent_periods_bottoms(id_tg):
-	async with aiohttp.ClientSession() as session:
-		params = {"id_tg": id_tg}
-		async with session.get(
-			f"{API_URL}/marks/get_user_periods", params=params
-		) as response:
-			data: dict = await response.json()
-			return [KeyboardButton(text=period) for period in data.get("result").keys()]
+async def get_kb_clent_periods_bottoms(id_tg, session):
+	params = {"id_tg": id_tg}
+	async with session.get(
+		f"{API_URL}/marks/get_user_periods", params=params
+	) as response:
+		data: dict = await response.json()
+		return [KeyboardButton(text=period) for period in data.get("result").keys()]
 
 
-async def get_kb_client_main(id_tg):
-	periods = await get_kb_clent_periods_bottoms(id_tg)
+async def get_kb_client_main(id_tg, session):
+	periods = await get_kb_clent_periods_bottoms(id_tg, session)
 	kb_bottoms = [periods, [settings_b, help_b]]
 	return ReplyKeyboardMarkup(keyboard=kb_bottoms, resize_keyboard=True)
 

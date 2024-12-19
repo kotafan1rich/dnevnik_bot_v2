@@ -24,6 +24,7 @@ from messages import (
 	CHANGE_JWT,
 	CHANGE_SETTINGS,
 	ERROR_MES,
+	HELLO_MES,
 	HELP,
 	SETTINGS,
 )
@@ -72,14 +73,14 @@ async def start(message: types.Message):
 	):
 		await bot.send_message(
 			id_tg,
-			f"Здравствуйте\n\n{HELP}",
-			reply_markup=await get_kb_client_main(id_tg),
+			HELLO_MES,
+			reply_markup=await get_kb_client_main(id_tg, session),
 		)
 	else:
 		await bot.send_message(
 			id_tg,
 			HELP,
-			reply_markup=await get_kb_client_main(id_tg),
+			reply_markup=await get_kb_client_main(id_tg, session),
 			parse_mode=None,
 		)
 
@@ -117,8 +118,11 @@ async def set_settings(message: types.Message, state: FSMContext):
 			id_tg=message.from_user.id, user_info=params
 		)
 		text = ADDED if res else ERROR_MES
+		session = await get_global_session()
 		await bot.send_message(
-			message.from_user.id, text, reply_markup=await get_kb_client_main(id_tg)
+			message.from_user.id,
+			text,
+			reply_markup=await get_kb_client_main(id_tg, session),
 		)
 		await state.clear()
 
@@ -168,13 +172,14 @@ async def set_jwt(message: types.Message, state: FSMContext):
 
 async def cancel_handler(message: types.Message, state: FSMContext) -> None:
 	user_id = message.from_user.id
+	session = await get_global_session()
 
 	current_state = await state.get_state()
 	if current_state is not None:
 		await state.clear()
 	await message.answer(
 		CANCELED,
-		reply_markup=await get_kb_client_main(user_id),
+		reply_markup=await get_kb_client_main(user_id, session),
 	)
 
 
@@ -185,7 +190,9 @@ async def get_marks_handler(message: types.Message):
 	marks_servise = MarksService(session=session)
 	marks = await marks_servise.get_marks(id_tg=id_tg, period=period)
 	await bot.send_message(
-		message.from_user.id, marks, reply_markup=await get_kb_client_main(id_tg)
+		message.from_user.id,
+		marks,
+		reply_markup=await get_kb_client_main(id_tg, session),
 	)
 
 
@@ -196,11 +203,12 @@ async def change_jwt(message: types.Message, state: FSMContext):
 
 async def help(message: types.Message):
 	id_tg = message.from_user.id
+	session = await get_global_session()
 
 	await bot.send_message(
 		message.from_user.id,
 		HELP,
-		reply_markup=await get_kb_client_main(id_tg),
+		reply_markup=await get_kb_client_main(id_tg, session),
 		parse_mode=None,
 	)
 

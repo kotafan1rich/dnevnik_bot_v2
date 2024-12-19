@@ -11,6 +11,8 @@ https://dnevnik2.petersburgedu.ru/api/journal/person/related-child-list
 Намите Настройки -> Изменить информацию -> education_id -> ВАШ ID -> Сохранить
 """
 
+HELLO_MES = f"Здравствуйте\n\n{HELP}"
+
 SETTINGS = "Ты можешь изменить:"
 
 ERROR_MES = "Ошибка... Оценки не найдены, попробуй ещё раз."
