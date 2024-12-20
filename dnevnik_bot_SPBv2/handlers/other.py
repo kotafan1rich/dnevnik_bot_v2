@@ -78,10 +78,10 @@ class MarksService:
 		Эта функция принимает словарь с информацией о пользователе и возвращает строку, содержащую отформатированные данные о группе, образовании и JWT-токене. Если токен отсутствует, в строке будет указано "None".
 
 		Args:
-		                user_info (dict): Словарь с информацией о пользователе, содержащий ключи "group_id", "education_id" и "jwt_token".
+		    user_info (dict): Словарь с информацией о пользователе, содержащий ключи "group_id", "education_id" и "jwt_token".
 
 		Returns:
-		                str: Отформатированная строка с информацией о пользователе.
+		    str: Отформатированная строка с информацией о пользователе.
 		"""
 
 		group_id: str = f'group_id: {user_info.get("group_id")}'
@@ -98,11 +98,11 @@ class MarksService:
 		Эта асинхронная функция отправляет запрос на обновление информации о пользователе в систему, используя указанный Telegram ID и данные пользователя. Она возвращает статус ответа от API, который указывает на результат операции.
 
 		Args:
-		                id_tg (int): Telegram ID пользователя, информацию о котором необходимо сохранить.
-		                user_info (dict): Словарь с информацией о пользователе для обновления.
+			id_tg (int): Telegram ID пользователя, информацию о котором необходимо сохранить.
+			user_info (dict): Словарь с информацией о пользователе для обновления.
 
 		Returns:
-		                int: Статус ответа от API, указывающий на результат операции.
+		    int: Статус ответа от API, указывающий на результат операции.
 		"""
 
 		params = {"id_tg": id_tg}
@@ -154,9 +154,9 @@ class MarksService:
 		target_grade = subject_data["target_grade"] or ""
 		final_m = ""
 		if subject_data["final_q"]:
-			final_m = "=> " + str(subject_data["final_q"][0])
+			final_m = "➡️ " + str(subject_data["final_q"][0])
 		last_3 = " ".join(list(map(str, subject_data["last_three"])))
-		return f"<i>{subject}</i>  {last_3}  ({count})  <i>{average}</i> {final_m} {target_grade}\n"
+		return f"<b><i>{subject}</i></b> <i>{average}</i> {final_m}\n{last_3}  ({count})  {target_grade}\n\n"
 
 	def _sort_year(self, sub_data: dict, subject) -> str:
 		"""
@@ -174,10 +174,12 @@ class MarksService:
 
 		finals_q = " ".join(map(str, sub_data["final_q"][::-1]))
 		finals_y = (
-			"=> " + str(sub_data["final_years"][0]) if sub_data["final_years"] else ""
+			"➡️ " + str(sub_data["final_years"][0]) if sub_data["final_years"] else ""
 		)
 		final = "| " + str(sub_data["final"][0]) if sub_data["final"] else ""
-		return f"<i>{subject}</i>  {sub_data['average'][0]} ({sub_data['count_marks'][0]}) {finals_q} {finals_y} {final}\n"
+  
+		str_finals = finals_q + finals_y + final + " " if any([finals_q, finals_y, final]) else "❌ "
+		return f"<b><i>{subject}</i></b> <i>{sub_data['average'][0]}</i>\n{str_finals}({sub_data['count_marks'][0]})\n\n"
 
 	def sort_marks(self, data: dict, period_name) -> str:
 		"""
@@ -193,7 +195,7 @@ class MarksService:
 		                str: Отформатированная строка с оценками и средними баллами.
 		"""
 
-		result = f"{period_name}\n\n"
+		result = f"<b>{period_name}</b>\n\n"
 
 		finals_average = data["finals_average_q"]
 		all_finals_y = data["finals_average_y"]
@@ -205,9 +207,9 @@ class MarksService:
 				else:
 					result += self._sort_quater(subject_data, subject)
 		if finals_average:
-			result += f"\nСр. балл аттестации - {finals_average}"
+			result += f"Ср. балл аттестации - {finals_average}"
 		if all_finals_y:
-			result += f"\nСр. балл итоговой аттестации - {all_finals_y}"
+			result += f"Ср. балл итоговой аттестации - {all_finals_y}"
 		return self._abbreviation(result)
 
 	async def get_marks(self, id_tg: int, period: str):
