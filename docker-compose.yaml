@@ -1,6 +1,6 @@
 services:
   bot:
-    container_name: bot
+    container_name: bot_el
     build: ./dnevnik_bot_SPBv2
     restart: always
 
