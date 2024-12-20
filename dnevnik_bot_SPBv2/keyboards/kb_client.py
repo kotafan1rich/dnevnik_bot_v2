@@ -1,4 +1,3 @@
-import aiohttp
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
 from config import API_URL
@@ -18,6 +17,8 @@ async def get_kb_clent_periods_bottoms(id_tg, session):
 	async with session.get(
 		f"{API_URL}/marks/get_user_periods", params=params
 	) as response:
+		if response.status != 200:
+			return []
 		data: dict = await response.json()
 		return [KeyboardButton(text=period) for period in data.get("result").keys()]
 
@@ -26,6 +27,7 @@ async def get_kb_client_main(id_tg, session):
 	periods = await get_kb_clent_periods_bottoms(id_tg, session)
 	kb_bottoms = [periods, [settings_b, help_b]]
 	return ReplyKeyboardMarkup(keyboard=kb_bottoms, resize_keyboard=True)
+
 
 kb_client_settings_bottms = [[change_info_b], [cancel_b]]
 
