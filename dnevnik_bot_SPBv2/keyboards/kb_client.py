@@ -1,5 +1,7 @@
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
+from aiocache import cached
+
 from config import API_URL
 
 help_b = KeyboardButton(text="Помощь")
@@ -22,7 +24,7 @@ async def get_kb_clent_periods_bottoms(id_tg, session):
 		data: dict = await response.json()
 		return [KeyboardButton(text=period) for period in data.get("result").keys()]
 
-
+@cached(ttl=600)
 async def get_kb_client_main(id_tg, session):
 	periods = await get_kb_clent_periods_bottoms(id_tg, session)
 	kb_bottoms = [periods, [settings_b, help_b]]
