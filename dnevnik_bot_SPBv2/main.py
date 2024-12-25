@@ -4,11 +4,15 @@ import asyncio
 import logging
 
 from create_bot import bot, dp
-from handlers import client
+from handlers.admin import admin_router
+from handlers.client import client_router
+from handlers.marks import marks_router
 
 logging.basicConfig(level=logging.INFO)
 
-client.register_handlers_client(dp)
+dp.include_router(client_router)
+dp.include_router(admin_router)
+dp.include_router(marks_router)
 
 
 async def main():

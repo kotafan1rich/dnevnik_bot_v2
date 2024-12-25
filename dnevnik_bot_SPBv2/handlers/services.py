@@ -1,3 +1,4 @@
+import logging
 import aiohttp
 
 from config import API_URL
@@ -60,16 +61,9 @@ class MarksService:
 
 		params = {"tg_id": id_tg}
 		async with self.session.get(
-			f"{API_URL}/user/by_id_tg", params=params
+			f"{API_URL}/user/by_id_tg", params=params, timeout=5
 		) as response:
-			if response.status == 404:
-				add_user_response = await self.add_user(id_tg)
-				if add_user_response:
-					async with self.session.get(
-						f"{API_URL}/user/by_id_tg", params=params
-					) as response_final:
-						return await response_final.json()
-			return await response.json()
+			return None if response.status == 404 else await response.json()
 
 	def get_clean_user_info(self, user_info):
 		"""
@@ -98,16 +92,17 @@ class MarksService:
 		Эта асинхронная функция отправляет запрос на обновление информации о пользователе в систему, используя указанный Telegram ID и данные пользователя. Она возвращает статус ответа от API, который указывает на результат операции.
 
 		Args:
-			id_tg (int): Telegram ID пользователя, информацию о котором необходимо сохранить.
-			user_info (dict): Словарь с информацией о пользователе для обновления.
+		        id_tg (int): Telegram ID пользователя, информацию о котором необходимо сохранить.
+		        user_info (dict): Словарь с информацией о пользователе для обновления.
 
 		Returns:
 		    int: Статус ответа от API, указывающий на результат операции.
 		"""
 
 		params = {"id_tg": id_tg}
+		logging.info(user_info)
 		async with self.session.post(
-			f"{API_URL}/user/update", params=params, json=user_info
+			f"{API_URL}/user/update", params=params, json=user_info, timeout=5
 		) as response:
 			return response.status
 
@@ -177,8 +172,12 @@ class MarksService:
 			"➡️ " + str(sub_data["final_years"][0]) if sub_data["final_years"] else ""
 		)
 		final = "| " + str(sub_data["final"][0]) if sub_data["final"] else ""
-  
-		str_finals = finals_q + finals_y + final + " " if any([finals_q, finals_y, final]) else "❌ "
+
+		str_finals = (
+			finals_q + finals_y + final + " "
+			if any([finals_q, finals_y, final])
+			else "❌ "
+		)
 		return f"<b><i>{subject}</i></b> <i>{sub_data['average'][0]}</i>\n{str_finals}({sub_data['count_marks'][0]})\n\n"
 
 	def sort_marks(self, data: dict, period_name) -> str:
@@ -228,7 +227,7 @@ class MarksService:
 
 		params = {"id_tg": id_tg}
 		async with self.session.get(
-			f"{API_URL}/marks/get_user_periods", params=params
+			f"{API_URL}/marks/get_user_periods", params=params, timeout=5
 		) as response_period:
 			data: dict = await response_period.json()
 			period_data: dict = data.get("result").get(period)
@@ -244,7 +243,7 @@ class MarksService:
 				"period_id": period_id,
 			}
 			async with self.session.get(
-				f"{API_URL}/marks", params=params
+				f"{API_URL}/marks", params=params, timeout=5
 			) as response_marks:
 				if response_marks and response_marks.status == 200:
 					json = await response_marks.json()

@@ -8,8 +8,8 @@ cancel_b = KeyboardButton(text="Отмена")
 change_info_b = KeyboardButton(text="Изменить информацию")
 education_id_b = KeyboardButton(text="education_id")
 group_id_b = KeyboardButton(text="group_id")
-save_b = KeyboardButton(text="Сохранить")
 change_jwt_b = KeyboardButton(text="jwt")
+save_b = KeyboardButton(text="Сохранить")
 
 
 async def get_kb_clent_periods_bottoms(id_tg, session):
@@ -21,6 +21,7 @@ async def get_kb_clent_periods_bottoms(id_tg, session):
 			return []
 		data: dict = await response.json()
 		return [KeyboardButton(text=period) for period in data.get("result").keys()]
+
 
 async def get_kb_client_main(id_tg, session):
 	periods = await get_kb_clent_periods_bottoms(id_tg, session)
@@ -42,3 +43,5 @@ kb_client_settings = ReplyKeyboardMarkup(
 kb_client_set_params = ReplyKeyboardMarkup(
 	keyboard=kb_client_set_params_bottms, resize_keyboard=True
 )
+
+kb_client_cancel = ReplyKeyboardMarkup(keyboard=[[cancel_b]], resize_keyboard=True)
