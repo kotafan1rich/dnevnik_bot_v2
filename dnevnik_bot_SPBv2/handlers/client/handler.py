@@ -3,8 +3,8 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
 from create_bot import bot
-from .session import get_global_session
-from keyboards import (
+from handlers.session import get_global_session
+from handlers.keyboards import (
 	cancel_b,
 	get_kb_client_main,
 	help_b,
@@ -15,7 +15,7 @@ from messages import (
 	HELP,
 )
 
-from .services import (
+from handlers.services import (
 	MarksService,
 )
 

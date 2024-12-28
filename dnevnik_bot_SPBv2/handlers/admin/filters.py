@@ -14,12 +14,3 @@ class AdminFilter(Filter):
 	async def __call__(self, message: Message, state: FSMContext) -> bool:
 		state = await state.get_state()
 		return message.from_user.id in self.admins and self.state == state
-
-
-class MarksFilter(Filter):
-	def __init__(self, state=None):
-		self.state = state
-
-	async def __call__(self, message: Message, state: FSMContext) -> bool:
-		state = await state.get_state()
-		return self.state == state

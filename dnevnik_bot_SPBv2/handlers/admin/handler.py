@@ -3,8 +3,8 @@ from aiogram import F, Router, types
 from .fsms import FSMAdmin, FSMAdminAddUser, FSMAdminGetUser, FSMAdminUpdateUser
 
 from .filters import AdminFilter
-from .services import MarksService
-from .session import get_global_session
+from handlers.services import MarksService
+from handlers.session import get_global_session
 from messages import (
 	ADDED,
 	ADMIN_PANEL,
@@ -16,7 +16,7 @@ from messages import (
 	USER_EXISTS,
 	USER_DOES_NOT_EXIST,
 )
-from keyboards import (
+from handlers.keyboards import (
 	get_user_b,
 	update_user_b,
 	add_user_b,
@@ -79,7 +79,7 @@ async def get_user_by_id_tg(message: types.Message, state: FSMContext):
 	marks_servise = MarksService(session=session)
 	user_info = await marks_servise.get_user_info(id_tg)
 	if not user_info:
-		await bot.send_message(message.from_user.id, USER_DOES_NOT_EXIST)
+		await bot.send_message(message.from_user.id, USER_DOES_NOT_EXIST, reply_markup=kb_admin)
 	else:
 		clean_user_info: str = marks_servise.get_clean_user_info(user_info)
 		await bot.send_message(

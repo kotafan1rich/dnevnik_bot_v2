@@ -20,11 +20,3 @@ class FSMAdminUpdateUser(StatesGroup):
 	education_id = State()
 	group_id = State()
 	jwt_token = State()
-
-
-class FSMSettings(StatesGroup):
-    user_info = State()
-    change_info = State()
-    education_id = State()
-    group_id = State()
-    jwt_token = State()

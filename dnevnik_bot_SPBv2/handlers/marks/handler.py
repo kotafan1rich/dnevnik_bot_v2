@@ -3,8 +3,8 @@ from aiogram.fsm.context import FSMContext
 
 from create_bot import bot
 from .fsms import FSMSettings
-from .session import get_global_session
-from keyboards import (
+from handlers.session import get_global_session
+from handlers.keyboards import (
 	change_info_b,
 	change_jwt_b,
 	education_id_b,
@@ -23,7 +23,7 @@ from messages import (
 	SETTED_SAVE,
 	SETTINGS,
 )
-from .services import (
+from handlers.services import (
 	MarksService,
 )
 from .filters import MarksFilter
