@@ -26,7 +26,7 @@ from messages import (
 from handlers.services import (
 	MarksService,
 )
-from .filters import MarksFilter
+from .filters import GetMarksFilter, MarksFilter
 
 PERIOD_TEXTS = [
 	"1 четверть",
@@ -140,7 +140,7 @@ async def set_jwt(message: types.Message, state: FSMContext):
 	)
 
 
-@marks_router.message(MarksFilter(), F.text.in_(PERIOD_TEXTS))
+@marks_router.message(MarksFilter(), GetMarksFilter())
 async def get_marks_handler(message: types.Message):
 	id_tg = message.from_user.id
 	period = message.text

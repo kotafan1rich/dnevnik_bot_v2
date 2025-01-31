@@ -9,5 +9,12 @@ class MarksFilter(Filter):
 		self.state = state
 
 	async def __call__(self, message: Message, state: FSMContext) -> bool:
+		text = message.text
 		state = await state.get_state()
 		return self.state == state
+
+
+class GetMarksFilter(Filter):
+	async def __call__(self, message: Message) -> bool:
+		text = message.text
+		return "четверть" in text or "полугодие" in text or "Год" in text
